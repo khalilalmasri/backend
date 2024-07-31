@@ -2,6 +2,7 @@ const express = require('express');
 const connectToDb = require('./config/connectToDb');
 require('dotenv').config();
 
+
 connectToDb();
 //Init app
 const app = express();
@@ -9,6 +10,9 @@ const app = express();
 //middleware
 app.use(express.json());
 
+
+// Routes
+app.use("/api/auth", require("./routes/authRoute"))
 
 //running server
 const Port = process.env.PORT || 3000;

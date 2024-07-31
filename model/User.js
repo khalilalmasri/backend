@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const joi = require("joi");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -37,6 +38,19 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+
 const User = mongoose.model("User", UserSchema);
 
-module.exports = { User };
+function validateRegisterUser(user) {
+  const schema = joi.object({
+    username: joi.string().min(3).max(100).required(),
+    email: joi.string().min(5).max(100).required().email(),
+    password: joi.string().min(8).required(),
+    profilephoto: joi.object(),
+    bio: joi.string(),
+    isAdmin: joi.boolean(),
+    isAcoountVerified: joi.boolean(),
+  });
+  return schema.validate(user);
+}
+module.exports = { User , validateRegisterUser };

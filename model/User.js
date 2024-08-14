@@ -39,16 +39,17 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
 // Generate token
 UserSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ id: this._id , isAdmin: this.isAdmin }, process.env.JWTPRIVATEKEY, {
-    expiresIn: "500d",});
+  const token = jwt.sign(
+    { id: this._id, isAdmin: this.isAdmin },
+    process.env.JWTPRIVATEKEY,
+    {
+      expiresIn: "500d",
+    }
+  );
   return token;
 };
-
-
-
 
 const User = mongoose.model("User", UserSchema);
 
@@ -72,4 +73,17 @@ function validateLoginUser(user) {
   });
   return schema.validate(user);
 }
-module.exports = { User, validateRegisterUser, validateLoginUser };
+function validateUpdateUser(user) {
+  const schema = joi.object({
+    username: joi.string().trim().min(3).max(100).required(),
+    password: joi.string().trim().min(8),
+    bio: joi.string(),
+  });
+  return schema.validate(user);
+}
+module.exports = {
+  User,
+  validateRegisterUser,
+  validateLoginUser,
+  validateUpdateUser,
+};

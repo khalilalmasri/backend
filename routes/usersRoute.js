@@ -4,20 +4,28 @@ const {
   getUserProfileCtrl,
   updateUserProfileCtrl,
   getUsersCountCtrl,
+  profilePhotoUploadCtrl,
 } = require("../controllers/usersController");
+const photoupload = require("../middlewares/PhotoUpload");
 const validateObjectId = require("../middlewares/validateObjectId");
 const {
   verifyTokenAndAdmin,
   verifyTokenAndOnlySameUser,
+  verifyToken,
 } = require("../middlewares/verifyToken");
 
 //api/users/profile
 router.route("/profile").get(verifyTokenAndAdmin, getAllUsersCtrl);
 //api/users/profile/:id
+
 router
   .route("/profile/:id")
   .get(validateObjectId, getUserProfileCtrl)
   .put(validateObjectId, verifyTokenAndOnlySameUser, updateUserProfileCtrl);
+
+router
+  .route("/profile/profile-photo-upload")
+  .post(verifyToken, photoupload.single("image"), profilePhotoUploadCtrl);
 
 router.route("/count").get(verifyTokenAndAdmin, getUsersCountCtrl);
 

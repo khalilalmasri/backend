@@ -41,8 +41,22 @@ const verifyTokenAndOnlySameUser = (req, res, next) => {
   });
 };
 
+// veryfying token & Authorization
+const verifyTokenAndAuthorization = (req, res, next) => {
+  verifyToken(req, res, () => {
+    if (req.user.id === req.params.id || req.user.isAdmin) {
+      next();
+    } else {
+      return res
+        .status(403)
+        .json({ message: "not allowed , only same user or admin" });
+    }
+  });
+};
+
 module.exports = {
   verifyToken,
   verifyTokenAndAdmin,
   verifyTokenAndOnlySameUser,
+  verifyTokenAndAuthorization,
 };

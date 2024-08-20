@@ -109,6 +109,29 @@ module.exports.getSinglePostsCtrl = asyncHandler(async (req, res) => {
 * @access public 
 ------------------------------------------------*/
 module.exports.getPostsCountCtrl = asyncHandler(async (req, res) => {
-    const count = await Post.countDocuments();
-    res.status(200).json(count);
-  });
+  const count = await Post.countDocuments();
+  res.status(200).json(count);
+});
+
+/**----------------------------------------------
+* @description  Delete single Post
+* @route /api/posts/:id
+* @method DELETE
+* @access private (only admin or post owner) 
+------------------------------------------------*/
+module.exports.DeletePostsCtrl = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  if (req.user.isAdmin || req.user.id === post.user.toString()) {
+    await Post.findByIdAndDelete(req.params.id);
+    await cloudinaryRemoveImg(post.image.publicId);
+    // delete comments     TODO
+    res
+      .status(200)
+      .json({ message: "Post deleted successfully", postId: post._id });
+  } else {
+    return res.status(403).json({ message: "Not authorized" });
+  }
+});

@@ -4,6 +4,7 @@ const {
   getAllPostsCtrl,
   getSinglePostsCtrl,
   getPostsCountCtrl,
+  DeletePostsCtrl,
 } = require("../controllers/postController");
 const photoupload = require("../middlewares/PhotoUpload");
 const validateObjectId = require("../middlewares/validateObjectId");
@@ -19,6 +20,9 @@ router
 router.route("/count").get(getPostsCountCtrl);
 
 // /api/posts/:id
-router.route("/:id").get(validateObjectId, getSinglePostsCtrl);
+router
+  .route("/:id")
+  .get(validateObjectId, getSinglePostsCtrl)
+  .delete(validateObjectId, verifyToken, DeletePostsCtrl);
 
 module.exports = router;

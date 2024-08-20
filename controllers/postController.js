@@ -202,11 +202,50 @@ module.exports.updatePostImageCtrl = asyncHandler(async (req, res) => {
     req.params.id,
     { $set: { image: { url: result.secure_url, publicId: result.public_id } } },
     { new: true }
-  ).populate("user", ["-password"]);
+  );
 
   // 7 . send response to the client
   res.status(200).json(updatedPost);
 
   // 8 . remove image from server
   fs.unlinkSync(imagePath);
+});
+
+/**----------------------------------------------
+* @description   Toggle Like
+* @route /api/posts/like/:id
+* @method PUT
+* @access private (only logged in user)
+------------------------------------------------*/
+module.exports.toggleLikeCtrl = asyncHandler(async (req, res) => {
+  const loggedInUser = req.user.id;
+  const { id: postId } = req.params;
+  let post = await Post.findById(postId);
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  // if (post.likes.includes(req.user.id)) {
+  //   await post.updateOne({ $pull: { likes: req.user.id } });
+  // } else {
+  //   await post.updateOne({ $push: { likes: req.user.id } });
+  // }
+  const isPostAlreadyLiked = post.likes.find(
+    (user) => user.toString() === loggedInUser
+  );
+  if (isPostAlreadyLiked) {
+    post = await Post.findByIdAndUpdate(
+      postId,
+      // $pull is a mongodb operator used with array
+      { $pull: { likes: loggedInUser } },
+      { new: true }
+    );
+  } else {
+    post = await Post.findByIdAndUpdate(
+      postId,
+      // $push is a mongodb operator used with array
+      { $push: { likes: loggedInUser } },
+      { new: true }
+    );
+  }
+  res.status(200).json({ message: "Post liked successfully" });
 });

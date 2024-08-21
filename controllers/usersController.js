@@ -17,20 +17,22 @@ const {
 
 const getAllUsersCtrl = asyncHandler(async (req, res) => {
   // console.log("req.headers.authorization", req.headers.authorization.split(" ")[1]);
-  const users = await User.find().select("-password");
+  const users = await User.find().select("-password").populate("posts");
 
   res.status(200).json({ users });
 });
 
 /**
- * @description get users profile
+ * @description get user profile
  * @route /api/auth/profile/:id
  * @method GET
  * @access puplic
  */
 
 const getUserProfileCtrl = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id).select("-password").populate(
+    "posts",
+  );
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }

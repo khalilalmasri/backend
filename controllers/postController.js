@@ -96,9 +96,9 @@ module.exports.getAllPostsCtrl = asyncHandler(async (req, res) => {
 * @access public 
 ------------------------------------------------*/
 module.exports.getSinglePostsCtrl = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id).populate("user", [
-    "-password",
-  ]);
+  const post = await Post.findById(req.params.id)
+    .populate("user", ["-password"])
+    .populate("comments");
   if (!post) {
     return res.status(404).json({ message: "Post not found" });
   }

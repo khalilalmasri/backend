@@ -3,7 +3,7 @@ const {
   Comment,
   validateCreateComment,
   validateUpdateComment,
-} = require("../model/comment");
+} = require("../model/Comment");
 const { User } = require("../model/User");
 const { Post } = require("../model/Post");
 

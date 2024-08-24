@@ -17,16 +17,29 @@ const cloudinaryUploadImg = async (fileToUpload) => {
   }
 };
 
-
-
 //cloudinary Remove image
 const cloudinaryRemoveImg = async (imagePublicId) => {
-    try {
-      const result = await cloudinary.uploader.destroy(imagePublicId);
-      return result;
-    } catch (error) {
-      return error;
-    }
-  };
+  try {
+    const result = await cloudinary.uploader.destroy(imagePublicId);
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
 
-  module.exports = { cloudinaryUploadImg, cloudinaryRemoveImg };
+//cloudinary Remove Multiple Image
+
+const cloudinaryRemoveMultipleImg = async (PublicIds) => {
+  try {
+    const result = await cloudinary.v2.api.delete_resources(PublicIds);
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+module.exports = {
+  cloudinaryUploadImg,
+  cloudinaryRemoveImg,
+  cloudinaryRemoveMultipleImg,
+};
